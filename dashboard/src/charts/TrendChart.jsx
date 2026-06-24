@@ -16,7 +16,7 @@ export default function TrendChart({ articles }) {
       grid: { left: 46, right: 20, top: 34, bottom: 58 },
       legend: { top: 2, data: ['articles', '28-day average', 'monthly mean'] },
       tooltip: {
-        trigger: 'item',
+        trigger: 'item', confine: true,
         formatter: (p) => {
           if (p.seriesName === 'articles') {
             const d = new Date(p.value[0]).toISOString().slice(0, 10)
@@ -32,11 +32,13 @@ export default function TrendChart({ articles }) {
       },
       series: [
         {
-          name: 'articles', type: 'scatter', data: scatter, symbolSize: 5,
+          // The dots — bigger, brighter, and they pop on hover so they're easy to target.
+          name: 'articles', type: 'scatter', data: scatter, symbolSize: 6, large: false, z: 2,
           itemStyle: {
-            opacity: 0.3,
+            opacity: 0.45,
             color: (p) => (p.value[1] > 0.15 ? POS : p.value[1] < -0.15 ? NEG : NEU),
           },
+          emphasis: { scale: 2.2, itemStyle: { opacity: 1, borderColor: '#fff', borderWidth: 1 } },
           markArea: {
             silent: true, itemStyle: { color: 'rgba(150,150,145,0.10)' },
             data: [[{ yAxis: -0.15 }, { yAxis: 0.15 }]],
@@ -47,12 +49,13 @@ export default function TrendChart({ articles }) {
           },
         },
         {
+          // silent: true -> the line never steals the mouse from the dots beneath it.
           name: '28-day average', type: 'line', data: roll, showSymbol: false, smooth: true,
-          lineStyle: { width: 3, color: ACCENT }, z: 3,
+          silent: true, lineStyle: { width: 3, color: ACCENT }, z: 3,
         },
         {
           name: 'monthly mean', type: 'line', data: monthly, showSymbol: true, symbolSize: 5,
-          lineStyle: { width: 1.5, color: '#999', type: 'dotted' }, itemStyle: { color: '#999' }, z: 2,
+          silent: true, lineStyle: { width: 1.5, color: '#999', type: 'dotted' }, itemStyle: { color: '#999' }, z: 1,
         },
       ],
       dataZoom: [{ type: 'inside' }, { type: 'slider', bottom: 8, height: 18 }],
