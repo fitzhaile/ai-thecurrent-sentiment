@@ -1,0 +1,12 @@
+# Render Blueprint — static-site deploy of the dashboard (lives in dashboard/).
+# On Render: New + -> Blueprint -> connect this repo -> Apply.
+# Spec: https://render.com/docs/blueprint-spec
+services:
+  - name: thecurrent-sentiment
+    type: web
+    runtime: static
+    buildCommand: cd dashboard && npm install && npm run build
+    staticPublishPath: dashboard/dist
+    envVars:
+      - key: NODE_VERSION
+        value: "20.19.5"

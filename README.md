@@ -60,6 +60,13 @@ npm --prefix dashboard run build       # production build -> dashboard/dist
 `base: './'`), deployable to any static host — Netlify, Vercel, Cloudflare Pages,
 GitHub Pages, or a plain web server. No backend.
 
+### Deploy to Render
+
+A `render.yaml` blueprint is included. On Render: **New + → Blueprint**, connect this
+repo, and apply — it builds `dashboard/` and publishes `dashboard/dist`. Or create a
+**Static Site** manually: Build Command `cd dashboard && npm install && npm run build`,
+Publish Directory `dashboard/dist`, env var `NODE_VERSION=20.19.5`.
+
 **Views:** valence trend (per-article scatter + 28‑day rolling average + monthly mean,
 with a date-zoom slider), distribution, monthly volume, valence‑vs‑tone scatter, mean
 valence by section and by byline, a section × month heatmap, and the most
