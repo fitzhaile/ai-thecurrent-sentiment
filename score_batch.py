@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """
-Full-corpus sentiment scoring via the Anthropic Batch API (50% cheaper, async).
+Sentiment scoring via the Anthropic Batch API (50% cheaper, async).
 
-Uses the EXACT rubric/schema/model from score.py, so the full run behaves like the
-approved calibration. Writes data/scores.json. Resumable via data/batch_id.txt.
+INCREMENTAL: only scores articles not already in data/scores.json, then merges the
+new scores in. So re-running after widening the scrape window pays only for the newly
+added articles and keeps existing scores stable (no drift, no re-spend).
+
+Uses the EXACT rubric/schema/model from score.py. Resumable via data/batch_id.txt.
 
 Modes:
-    python score_batch.py submit    # build + submit the batch, save the id, exit (fast)
-    python score_batch.py collect   # poll the saved batch to completion, write scores.json
-    python score_batch.py           # submit then collect in one process (good for background)
+    python score_batch.py submit    # submit a batch of UNSCORED articles, save the id, exit
+    python score_batch.py collect   # poll the saved batch, merge results into scores.json
+    python score_batch.py           # submit then collect
 """
 import argparse
 import json
@@ -21,7 +24,6 @@ import anthropic
 from anthropic.types.message_create_params import MessageCreateParamsNonStreaming
 from anthropic.types.messages.batch_create_params import Request
 
-# Single source of truth for the rubric — imported, never duplicated.
 from score import RUBRIC, SCHEMA, MODEL, MIN_WORDS, PRICE_IN, PRICE_OUT, load_env, ROOT
 
 IDFILE = ROOT / "data" / "batch_id.txt"
@@ -32,17 +34,23 @@ def load_articles():
     return json.loads((ROOT / "data" / "articles.json").read_text())["articles"]
 
 
-def build_requests(articles):
+def existing_scores():
+    if OUTFILE.exists():
+        return json.loads(OUTFILE.read_text()).get("scores", [])
+    return []
+
+
+def build_requests(articles, done_ids):
+    """One request per scoreable article NOT already scored."""
     reqs = []
     for a in articles:
-        if a["word_count"] < MIN_WORDS:
-            continue  # skip non-substantive results/data stubs
+        if a["word_count"] < MIN_WORDS or a["id"] in done_ids:
+            continue
         user = f"Headline: {a['title']}\n\nArticle:\n{a['text']}"
         reqs.append(Request(
             custom_id=str(a["id"]),
             params=MessageCreateParamsNonStreaming(
-                model=MODEL,
-                max_tokens=4000,
+                model=MODEL, max_tokens=4000,
                 thinking={"type": "adaptive"},
                 system=RUBRIC,
                 messages=[{"role": "user", "content": user}],
@@ -67,19 +75,25 @@ def parse_result(text):
 
 def submit(client, articles):
     if IDFILE.exists():
-        print(f"batch already submitted: {IDFILE.read_text().strip()}")
-        return IDFILE.read_text().strip()
-    reqs = build_requests(articles)
-    print(f"submitting batch of {len(reqs)} requests ...", flush=True)
+        bid = IDFILE.read_text().strip()
+        print(f"batch already submitted: {bid}")
+        return bid
+    done = {s["id"] for s in existing_scores()}
+    reqs = build_requests(articles, done)
+    if not reqs:
+        print(f"nothing new to score — all {len(done)} scoreable articles already scored.")
+        return None
+    print(f"submitting {len(reqs)} UNSCORED articles ({len(done)} already scored, kept as-is) ...", flush=True)
     batch = client.messages.batches.create(requests=reqs)
     IDFILE.write_text(batch.id)
-    print(f"submitted: {batch.id}  (status={batch.processing_status}; id saved to {IDFILE})")
+    print(f"submitted: {batch.id}  (status={batch.processing_status}; id saved)")
     return batch.id
 
 
 def collect(client, articles):
     if not IDFILE.exists():
-        sys.exit("no batch_id.txt — run `submit` first")
+        print("no batch to collect.")
+        return
     batch_id = IDFILE.read_text().strip()
     t0 = time.time()
     while True:
@@ -96,7 +110,7 @@ def collect(client, articles):
 
     by_id = {a["id"]: a for a in articles}
     keep = ("id", "date", "section", "author", "title", "word_count", "url")
-    scores, errors, in_tok, out_tok = [], [], 0, 0
+    new_scores, errors, in_tok, out_tok = [], [], 0, 0
     for res in client.messages.batches.results(batch_id):
         cid = int(res.custom_id)
         if res.result.type == "succeeded":
@@ -105,20 +119,23 @@ def collect(client, articles):
             out_tok += msg.usage.output_tokens
             text = next((bk.text for bk in msg.content if getattr(bk, "type", None) == "text"), None)
             try:
-                d = parse_result(text)
-                scores.append({**{f: by_id[cid][f] for f in keep}, **d})
+                new_scores.append({**{f: by_id[cid][f] for f in keep}, **parse_result(text)})
             except Exception as e:
                 errors.append({"id": cid, "error": f"parse: {e}"})
         else:
             errors.append({"id": cid, "error": res.result.type})
 
-    scores.sort(key=lambda s: s["date"] or "")
+    # Merge: existing scores stay; newly scored are added.
+    merged = {s["id"]: s for s in existing_scores()}
+    for s in new_scores:
+        merged[s["id"]] = s
+    allscores = sorted(merged.values(), key=lambda s: s["date"] or "")
     OUTFILE.write_text(json.dumps({
-        "model": MODEL, "rubric_version": 1, "scored": len(scores),
-        "errors": errors, "scores": scores}, ensure_ascii=False, indent=2))
-    billed = (in_tok * PRICE_IN + out_tok * PRICE_OUT) * 0.5  # 50% batch discount
-    print(f"\nDONE: {len(scores)} scored, {len(errors)} errors -> {OUTFILE}")
-    print(f"tokens: {in_tok:,} in / {out_tok:,} out  |  actual batch cost ~${billed:.2f}")
+        "model": MODEL, "rubric_version": 1, "scored": len(allscores),
+        "errors": errors, "scores": allscores}, ensure_ascii=False, indent=2))
+    billed = (in_tok * PRICE_IN + out_tok * PRICE_OUT) * 0.5
+    print(f"\nDONE: +{len(new_scores)} new, {len(errors)} errors -> {len(allscores)} total in {OUTFILE}")
+    print(f"new tokens: {in_tok:,} in / {out_tok:,} out  |  this run's batch cost ~${billed:.2f}")
     if errors:
         print("first errors:", errors[:10])
 
@@ -133,7 +150,8 @@ def main():
     client = anthropic.Anthropic()
     articles = load_articles()
     if args.mode in ("submit", "auto"):
-        submit(client, articles)
+        if submit(client, articles) is None and args.mode == "auto":
+            return
     if args.mode in ("collect", "auto"):
         collect(client, articles)
 

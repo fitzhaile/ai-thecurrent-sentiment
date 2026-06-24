@@ -31,9 +31,9 @@ from pathlib import Path
 BASE = "https://thecurrentga.org/wp-json/wp/v2"
 UA = "SentimentResearchBot/1.0 (one-time analysis)"
 
-# Default window = trailing 12 months as of 2026-06-23 (inclusive of 06-23).
+# Default window = two years back as of 2026-06-23 (2024-06-23 .. 2026-06-23 inclusive).
 # `before` is exclusive in the WP API, so 06-24T00:00 captures all of 06-23.
-DEFAULT_AFTER = "2025-06-23T00:00:00"
+DEFAULT_AFTER = "2024-06-23T00:00:00"
 DEFAULT_BEFORE = "2026-06-24T00:00:00"
 
 
