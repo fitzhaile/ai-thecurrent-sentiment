@@ -1,0 +1,26 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Node / dashboard build
+node_modules/
+dist/
+.vite/
+
+# Regenerable full-text cache (also avoids committing article bodies); recreate with scrape.py
+data/articles.json
+data/batch_id.txt
+
+# Dev artifacts
+.playwright-mcp/
+dash-*.png
+
+# OS
+.DS_Store
