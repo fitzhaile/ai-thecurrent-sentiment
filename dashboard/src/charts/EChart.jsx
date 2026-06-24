@@ -18,7 +18,7 @@ export default function EChart({ option, height = 300 }) {
   }, [])
 
   useEffect(() => {
-    if (chart.current) chart.current.setOption(option, true)
+    if (chart.current) chart.current.setOption({ textStyle: { fontFamily: '"Libre Franklin", system-ui, sans-serif' }, ...option }, true)
   }, [option])
 
   return <div ref={el} style={{ width: '100%', height }} />

@@ -31,164 +31,164 @@ export default function App() {
   const meanVal = avg(arts.map((a) => a.valence))
   const meanTone = avg(arts.map((a) => a.tone))
   const pctNeg = arts.length ? Math.round(arts.filter((a) => a.valence <= -0.15).length / arts.length * 100) : 0
+  const span = `${data.meta.window.after.slice(0, 7)} → ${data.meta.window.before.slice(0, 7)}`
 
   return (
-    <div className="app">
-      <header className="masthead">
-        <div className="brand">
-          <span className="mark" aria-hidden="true">
-            <svg viewBox="0 0 32 32" fill="none">
-              <path d="M4 19c3-5 6.5-5 9.5 0s6.5 5 9.5 0 6-4 5-4" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
-            </svg>
-          </span>
-          <div>
-            <h1>The Current — Sentiment of Coverage</h1>
-            <p className="sub">A year of coverage, read and scored for sentiment by Claude.</p>
+    <div className="page">
+      <header className="hero">
+        <div className="hero-inner">
+          <div className="hero-top">
+            <div className="brand">
+              <span className="mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none">
+                  <path d="M4 19c3-5 6.5-5 9.5 0s6.5 5 9.5 0 6-4 5-4" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
+                </svg>
+              </span>
+              <span className="brand-name">The Current</span>
+            </div>
+            <div className="hero-meta">
+              <div><b>{data.meta.n_scored.toLocaleString()}</b> articles scored</div>
+              <div>{span}</div>
+              <div>scored by {data.meta.model}</div>
+            </div>
           </div>
-        </div>
-        <div className="masthead-meta">
-          <div><b>{data.meta.n_scored}</b> articles scored</div>
-          <div>{data.meta.window.after.slice(0, 10)} → {data.meta.window.before.slice(0, 10)}</div>
-          <div>{data.meta.model}</div>
+          <h1 className="hero-title">Sentiment of<br />Coverage</h1>
+          <p className="standfirst">
+            Two years of the newsroom's reporting, read and scored by Claude — every story rated for how positive
+            or negative it feels, and how slanted the writing is.
+          </p>
         </div>
       </header>
 
-      <p className="intro">
-        Every article <b>The Current</b> published was read by Claude and scored on two independent −1 to +1
-        scales: <b>valence</b> — how positive or negative the article feels overall (subject and framing
-        together) — and <b>tone</b> — how slanted the <i>writing itself</i> is, separate from how grim the topic
-        is. A straight report on a tragedy is strongly negative valence but roughly neutral tone. Scores near 0
-        are neutral; the shaded band on the time chart marks that neutral zone.
-      </p>
+      <main className="app">
+        <div className="toolbar">
+          <label>
+            Section{' '}
+            <select value={section} onChange={(e) => setSection(e.target.value)}>
+              <option value="all">All sections</option>
+              {secList.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </label>
+          <span className="muted">{arts.length.toLocaleString()} articles shown{section !== 'all' ? ` · ${section}` : ''}</span>
+        </div>
 
-      <div className="controls">
-        <label>
-          Section{' '}
-          <select value={section} onChange={(e) => setSection(e.target.value)}>
-            <option value="all">All sections</option>
-            {secList.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
-        </label>
-        <span className="muted">{arts.length} articles shown{section !== 'all' ? ` · ${section}` : ''}</span>
-      </div>
-
-      <section className="group">
-        <p className="eyebrow">Overview</p>
         <div className="kpis">
-          <Kpi label="Articles" value={arts.length} />
+          <Kpi label="Articles" value={arts.length.toLocaleString()} />
           <Kpi label="Mean valence" value={meanVal.toFixed(2)} sign={meanVal} />
           <Kpi label="Mean tone" value={meanTone.toFixed(2)} sign={meanTone} />
-          <Kpi label="% negative" value={`${pctNeg}%`} />
+          <Kpi label="Negative" value={`${pctNeg}%`} />
         </div>
-        <p className="kpi-note">
-          Averages across the articles shown. <b>Valence/tone</b> run −1 (negative) to +1 (positive), 0 = neutral.
-          A slightly-negative mean valence with a near-zero mean tone is typical of accountability-focused local
-          news: the topics lean hard, but the reporting stays even.
+
+        <p className="intro">
+          Each article was scored by Claude on two independent −1‑to‑+1 scales: <b>valence</b> — how positive or
+          negative it feels overall — and <b>tone</b> — how slanted the <i>writing</i> is, regardless of how grim
+          the topic. Straight reporting of a tragedy is strongly negative valence but roughly neutral tone. A
+          slightly‑negative mean valence with near‑zero tone is typical of accountability‑focused local news:
+          hard topics, even‑handed reporting.
         </p>
-      </section>
 
-      <section className="group">
-        <p className="eyebrow">Sentiment over time</p>
-        <div className="card">
-          <h3>Valence over time</h3>
-          <p className="explain">
-            Each dot is one article, placed on the day it ran; the dark line is a <b>7-day rolling average</b>
-            {' '}that smooths out daily swings; the grey band is the neutral zone. Read the line, not individual
-            dots — a sustained dip marks a stretch of heavier news. Drag the slider to zoom a period, and hover a
-            dot to see which story it is.
-          </p>
-          <TrendChart articles={arts} />
-        </div>
-        <div className="grid2">
+        <Group n="01" label="Sentiment over time">
           <div className="card">
-            <h3>Valence distribution</h3>
+            <h3>Valence over time</h3>
             <p className="explain">
-              How the {data.meta.n_scored} scores spread out. The pile-up near zero is mostly neutral civic and
-              procedural coverage; the longer <b>negative tail</b> is the harder courts, public-safety, and
-              accountability reporting.
+              Each dot is one article on the day it ran; the dark line is a <b>7‑day rolling average</b> that
+              smooths daily swings; the grey band is neutral. Read the line, not single dots — a sustained dip
+              marks a heavier stretch of news. Drag the slider to zoom; hover a dot for the story.
             </p>
-            <DistributionChart articles={arts} />
+            <TrendChart articles={arts} />
+          </div>
+          <div className="grid2">
+            <div className="card">
+              <h3>Valence distribution</h3>
+              <p className="explain">
+                How the {data.meta.n_scored.toLocaleString()} scores spread out — a pile‑up near zero (neutral
+                civic coverage) with a long <b>negative tail</b> (courts, public safety, accountability).
+              </p>
+              <DistributionChart articles={arts} />
+            </div>
+            <div className="card">
+              <h3>Articles per month</h3>
+              <p className="explain">
+                Publishing volume — context for the trend. A month's average is more trustworthy when it sits on
+                more articles.
+              </p>
+              <VolumeChart articles={arts} />
+            </div>
+          </div>
+        </Group>
+
+        <Group n="02" label="Tone vs. topic">
+          <div className="card">
+            <h3>Valence vs. tone — why we score two numbers</h3>
+            <p className="explain">
+              Horizontal is <b>valence</b> (topic + feel); vertical is <b>tone</b> (the writing's slant). The
+              cloud spreads <b>wide across but stays in a thin band vertically</b> — grim topics reported
+              straight, not editorialized. That gap is the whole reason tone is scored separately.
+            </p>
+            <ToneScatter articles={arts} />
+          </div>
+        </Group>
+
+        <Group n="03" label="By section & byline">
+          <div className="card">
+            <h3>Mean valence by section</h3>
+            <p className="explain">
+              Which beats carry the heaviest news. <b>Courts and Public Safety</b> skew negative (crime,
+              accidents, litigation); <b>Community and Education</b> skew positive. Subject matter, not slant —
+              tone stays near neutral across every beat.
+            </p>
+            <SectionChart articles={all} field="section" />
           </div>
           <div className="card">
-            <h3>Articles per month</h3>
+            <h3>Mean valence by byline</h3>
             <p className="explain">
-              Publishing volume — context for the trend above. A month's average sentiment is more trustworthy
-              when it sits on more articles, so check the count before reading much into a single month.
+              Average valence per reporter and wire service (≥ 15 articles). Differences mostly track <b>what
+              beat someone covers</b> — investigations and government vs. features — not individual bias. Wire
+              bylines (Capitol Beat, Georgia Recorder) are state‑government coverage.
             </p>
-            <VolumeChart articles={arts} />
+            <SectionChart articles={all} field="author" minN={15} gridLeft={180} />
           </div>
-        </div>
-      </section>
+          <div className="card">
+            <h3>Valence heatmap — section × month</h3>
+            <p className="explain">
+              <b>Red</b> cells are a beat that ran negative that month — usually a specific cluster of stories;
+              <b>green</b> is an upbeat stretch. Blank cells are months a section didn't publish.
+            </p>
+            <HeatmapChart articles={all} />
+          </div>
+        </Group>
 
-      <section className="group">
-        <p className="eyebrow">Tone vs. topic</p>
-        <div className="card">
-          <h3>Valence vs. tone — why we score two numbers</h3>
-          <p className="explain">
-            Horizontal is <b>valence</b> (topic + feel); vertical is <b>tone</b> (the writing's slant). Each dot
-            is an article. The cloud spreads <b>wide left-to-right but stays in a thin band vertically</b> —
-            meaning grim topics are reported straight, not editorialized. That gap is the entire reason for
-            scoring tone separately: it lets the trend reflect the news without mistaking sober coverage of bad
-            events for bias.
-          </p>
-          <ToneScatter articles={arts} />
-        </div>
-      </section>
+        <Group n="04" label="Notable coverage">
+          <div className="tables">
+            <ArticleTable
+              title="Most negative valence"
+              caption="The model's hardest‑scoring stories. Hover a row for its one‑line rationale."
+              rows={byVal.slice(0, 8)}
+            />
+            <ArticleTable
+              title="Most positive valence"
+              caption="The most upbeat coverage — openings, awards, recognitions, community wins."
+              rows={byVal.slice(-8).reverse()}
+            />
+          </div>
+        </Group>
 
-      <section className="group">
-        <p className="eyebrow">By section &amp; byline</p>
-        <div className="card">
-          <h3>Mean valence by section</h3>
-          <p className="explain">
-            Which beats carry the heaviest news. <b>Courts and Public Safety</b> skew negative (crime, accidents,
-            litigation); <b>Community and Education</b> skew positive (events, recognitions, openings). This is
-            the subject matter, not a slant — tone stays near neutral across every beat.
-          </p>
-          <SectionChart articles={all} field="section" />
-        </div>
-        <div className="card">
-          <h3>Mean valence by byline</h3>
-          <p className="explain">
-            Average valence per reporter and wire service (≥ 15 articles). Differences mostly track <b>what beat
-            someone covers</b> — investigations and government vs. features and community — not any individual
-            bias. Wire bylines (e.g. Capitol Beat, Georgia Recorder) are state-government coverage.
-          </p>
-          <SectionChart articles={all} field="author" minN={15} gridLeft={180} />
-        </div>
-        <div className="card">
-          <h3>Valence heatmap — section × month</h3>
-          <p className="explain">
-            Section sentiment month by month (sections with ≥ 20 articles). <b>Red</b> cells are a beat that ran
-            negative that month — usually a specific cluster of stories worth a look; <b>green</b> is an upbeat
-            stretch. Blank cells are months a section didn't publish.
-          </p>
-          <HeatmapChart articles={all} />
-        </div>
-      </section>
-
-      <section className="group">
-        <p className="eyebrow">Notable coverage</p>
-        <div className="tables">
-          <ArticleTable
-            title="Most negative valence"
-            caption="The model's hardest-scoring articles. Hover a row for its one-line rationale — the quickest way to sanity-check a score."
-            rows={byVal.slice(0, 8)}
-          />
-          <ArticleTable
-            title="Most positive valence"
-            caption="The most upbeat coverage — openings, awards, recognitions, community wins."
-            rows={byVal.slice(-8).reverse()}
-          />
-        </div>
-      </section>
-
-      <footer className="foot">
-        {data.meta.n_total} articles published in the window · {data.meta.n_scored} scored ·{' '}
-        {data.meta.n_excluded_short} excluded as non-substantive (results/data stubs under 50 words).
-        Scores are a careful model read, not ground truth — they were stable across re-runs and validated, but
-        treat them as an annotator's judgment.
-      </footer>
+        <footer className="foot">
+          {data.meta.n_total.toLocaleString()} articles published in the window · {data.meta.n_scored.toLocaleString()} scored ·{' '}
+          {data.meta.n_excluded_short} excluded as non‑substantive (results stubs under 50 words). Scores are a
+          careful model read — stable across re‑runs and validated, but an annotator's judgment, not ground truth.
+        </footer>
+      </main>
     </div>
+  )
+}
+
+function Group({ n, label, children }) {
+  return (
+    <section className="group">
+      <p className="eyebrow"><span className="num">{n}</span><span className="label">{label}</span></p>
+      {children}
+    </section>
   )
 }
 
