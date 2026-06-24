@@ -9,12 +9,12 @@ export default function TrendChart({ articles }) {
     const scatter = articles
       .filter((a) => a.date)
       .map((a) => ({ value: [toTime(a.date), a.valence], title: a.title, section: a.section }))
-    const roll = rolling(articles, 'valence', 28)
+    const roll = rolling(articles, 'valence', 7)
     const monthly = monthlyMean(articles, 'valence').map((m) => [toTime(m.month + '-15T00:00:00'), m.mean])
 
     return {
       grid: { left: 46, right: 20, top: 34, bottom: 58 },
-      legend: { top: 2, data: ['articles', '28-day average', 'monthly mean'] },
+      legend: { top: 2, data: ['articles', '7-day average', 'monthly mean'] },
       tooltip: {
         trigger: 'item', confine: true,
         formatter: (p) => {
@@ -50,7 +50,7 @@ export default function TrendChart({ articles }) {
         },
         {
           // silent: true -> the line never steals the mouse from the dots beneath it.
-          name: '28-day average', type: 'line', data: roll, showSymbol: false, smooth: true,
+          name: '7-day average', type: 'line', data: roll, showSymbol: false, smooth: true,
           silent: true, lineStyle: { width: 3, color: ACCENT }, z: 3,
         },
         {

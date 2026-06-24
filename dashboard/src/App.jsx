@@ -88,7 +88,7 @@ export default function App() {
       <div className="card">
         <h3>Valence over time</h3>
         <p className="explain">
-          Each dot is one article, placed on the day it ran; the dark line is a <b>28-day rolling average</b>
+          Each dot is one article, placed on the day it ran; the dark line is a <b>7-day rolling average</b>
           {' '}that smooths out daily swings; the grey band is the neutral zone. Read the line, not individual
           dots — a sustained dip marks a stretch of heavier news. Drag the slider to zoom a period, and hover a
           dot to see which story it is.
