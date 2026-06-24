@@ -34,11 +34,23 @@ export default function App() {
 
   return (
     <div className="app">
-      <header>
-        <h1>The Current — Sentiment of Coverage</h1>
-        <p className="sub">
-          {data.meta.n_scored} articles · {data.meta.window.after.slice(0, 10)} → {data.meta.window.before.slice(0, 10)} · scored by {data.meta.model}
-        </p>
+      <header className="masthead">
+        <div className="brand">
+          <span className="mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M4 19c3-5 6.5-5 9.5 0s6.5 5 9.5 0 6-4 5-4" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
+            </svg>
+          </span>
+          <div>
+            <h1>The Current — Sentiment of Coverage</h1>
+            <p className="sub">A year of coverage, read and scored for sentiment by Claude.</p>
+          </div>
+        </div>
+        <div className="masthead-meta">
+          <div><b>{data.meta.n_scored}</b> articles scored</div>
+          <div>{data.meta.window.after.slice(0, 10)} → {data.meta.window.before.slice(0, 10)}</div>
+          <div>{data.meta.model}</div>
+        </div>
       </header>
 
       <p className="intro">

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import EChart from './EChart'
 import { toTime, rolling, monthlyMean } from '../lib/aggregate'
 
-const POS = '#2f7d5b', NEG = '#c1432e', NEU = '#b6b6af', ACCENT = '#1f3a5f'
+const POS = '#2f7d5b', NEG = '#c1432e', NEU = '#b8b2a4', ACCENT = '#46403a'
 
 export default function TrendChart({ articles }) {
   const option = useMemo(() => {
