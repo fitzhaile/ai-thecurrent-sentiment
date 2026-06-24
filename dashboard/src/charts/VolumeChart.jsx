@@ -10,7 +10,7 @@ export default function VolumeChart({ articles }) {
       tooltip: { trigger: 'axis' },
       xAxis: { type: 'category', data: m.map((x) => x.month), axisLabel: { rotate: 45, fontSize: 10 } },
       yAxis: { type: 'value', name: 'articles' },
-      series: [{ type: 'bar', barWidth: '68%', itemStyle: { color: '#c96442' }, data: m.map((x) => x.n) }],
+      series: [{ type: 'bar', barWidth: '68%', itemStyle: { color: '#294257' }, data: m.map((x) => x.n) }],
     }
   }, [articles])
 

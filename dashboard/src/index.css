@@ -1,15 +1,17 @@
 :root {
-  --paper: #f3efe6;        /* warm paper */
-  --card: #fffdf8;         /* warm white */
-  --ink: #1c1813;          /* deep warm near-black */
-  --muted: #6c655a;
-  --faint: #9a9384;
-  --line: #e5ddcd;
-  --accent: #c1532f;       /* coral / terracotta */
-  --neg: #bb4332;
+  --bg: #eef1f5;           /* cool light ground */
+  --card: #ffffff;
+  --ink: #0b2439;          /* The Current's deep navy (hero) */
+  --navy: #294257;         /* The Current's primary brand navy */
+  --gold: #ebb245;         /* The Current's secondary brand gold */
+  --gold-deep: #b9831a;    /* readable gold on light backgrounds */
+  --muted: #5a6b77;
+  --faint: #93a1ab;
+  --line: #dbe2e8;
+  --neg: #c1432e;
   --pos: #2f7d5b;
-  --cream: #f3efe6;
-  --shadow: 0 1px 2px rgba(40, 30, 15, .05), 0 16px 38px -14px rgba(40, 30, 15, .16);
+  --cream: #eef2f6;        /* text on navy */
+  --shadow: 0 1px 2px rgba(11, 36, 57, .05), 0 16px 38px -16px rgba(11, 36, 57, .20);
   --display: "Fraunces", "Iowan Old Style", Georgia, serif;
   --sans: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
@@ -17,7 +19,7 @@
 * { box-sizing: border-box; }
 
 body {
-  margin: 0; background: var(--paper); color: var(--ink);
+  margin: 0; background: var(--bg); color: var(--navy);
   font: 15px/1.6 var(--sans);
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
 }
@@ -26,27 +28,25 @@ body {
 
 @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
-/* ── Hero (full-bleed dark masthead) ───────────────────────── */
+/* ── Hero (full-bleed deep-navy masthead) ──────────────────── */
 .hero {
   background: var(--ink); color: var(--cream);
-  background-image: radial-gradient(130% 120% at 88% -20%, rgba(193, 83, 47, .34), transparent 56%);
-  border-bottom: 3px solid var(--accent);
+  background-image: radial-gradient(120% 130% at 88% -30%, rgba(235, 178, 69, .20), transparent 56%);
+  border-bottom: 3px solid var(--gold);
 }
-.hero-inner { max-width: 1140px; margin: 0 auto; padding: 30px 32px 56px; }
+.hero-inner { max-width: 1140px; margin: 0 auto; padding: 22px 32px 34px; }
 .hero-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand { display: flex; align-items: center; gap: 12px; }
-.mark { width: 38px; height: 38px; border-radius: 11px; background: var(--accent); display: grid; place-items: center; box-shadow: 0 6px 16px -4px rgba(193, 83, 47, .6); }
+.mark { width: 38px; height: 38px; border-radius: 11px; background: var(--gold); display: grid; place-items: center; box-shadow: 0 6px 16px -4px rgba(235, 178, 69, .5); }
 .mark svg { width: 22px; height: 22px; }
 .brand-name { font: 600 14px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--cream); }
-.hero-meta { text-align: right; font-size: 12px; line-height: 1.75; color: rgba(243, 239, 230, .58); white-space: nowrap; }
-.hero-meta b { color: var(--cream); font-weight: 600; }
 .hero-title {
-  margin: 32px 0 0; font-family: var(--display); font-weight: 600;
-  font-size: clamp(42px, 7.4vw, 78px); line-height: .96; letter-spacing: -0.025em; color: var(--cream);
+  margin: 18px 0 0; font-family: var(--display); font-weight: 600;
+  font-size: clamp(30px, 4.8vw, 48px); line-height: 1.0; letter-spacing: -0.02em; color: var(--cream);
   animation: rise .7s .05s both;
 }
 .standfirst {
-  margin: 18px 0 0; max-width: 600px; font-size: 17px; line-height: 1.5; color: rgba(243, 239, 230, .8);
+  margin: 13px 0 0; max-width: 580px; font-size: 16px; line-height: 1.5; color: rgba(238, 242, 246, .82);
   animation: rise .7s .16s both;
 }
 
@@ -54,12 +54,12 @@ body {
 .app { max-width: 1140px; margin: 0 auto; padding: 0 32px 110px; }
 
 .toolbar { display: flex; align-items: center; gap: 16px; padding: 24px 0 4px; flex-wrap: wrap; }
-.toolbar label { font-size: 14px; font-weight: 500; }
+.toolbar label { font-size: 14px; font-weight: 500; color: var(--navy); }
 .toolbar select {
   font: inherit; padding: 8px 14px; border: 1px solid var(--line); border-radius: 10px;
-  background: var(--card); color: var(--ink); cursor: pointer;
+  background: var(--card); color: var(--navy); cursor: pointer;
 }
-.toolbar select:hover { border-color: var(--accent); }
+.toolbar select:hover { border-color: var(--gold-deep); }
 .muted { color: var(--muted); font-size: 13px; }
 
 /* KPI stat cards */
@@ -68,18 +68,18 @@ body {
   position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--line);
   border-radius: 16px; padding: 24px 22px 20px; box-shadow: var(--shadow);
 }
-.kpi::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
-.kpi-val { font-family: var(--display); font-size: 46px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.kpi::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gold); }
+.kpi-val { font-family: var(--display); font-size: 46px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--navy); }
 .kpi-label { color: var(--muted); font-size: 11.5px; margin-top: 12px; text-transform: uppercase; letter-spacing: .09em; font-weight: 600; }
 
 .intro { max-width: 740px; color: var(--muted); font-size: 15px; line-height: 1.66; margin: 6px 0 0; animation: rise .6s .2s both; }
-.intro b { color: var(--ink); font-weight: 600; }
+.intro b { color: var(--navy); font-weight: 600; }
 
 /* Numbered report sections */
 .group { margin-top: 50px; animation: rise .6s both; }
 .eyebrow { display: flex; align-items: center; gap: 14px; margin: 0 0 18px; }
-.eyebrow .num { font-family: var(--display); font-size: 21px; font-weight: 600; color: var(--accent); line-height: 1; }
-.eyebrow .label { font: 600 12px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+.eyebrow .num { font-family: var(--display); font-size: 21px; font-weight: 600; color: var(--gold-deep); line-height: 1; }
+.eyebrow .label { font: 600 12px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--navy); }
 .eyebrow::after { content: ""; flex: 1; height: 2px; background: var(--line); }
 
 /* Cards */
@@ -87,9 +87,9 @@ body {
   background: var(--card); border: 1px solid var(--line); border-radius: 18px;
   padding: 24px 26px; box-shadow: var(--shadow); margin-bottom: 20px;
 }
-.card h3 { margin: 0 0 8px; font-family: var(--display); font-size: 23px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; }
+.card h3 { margin: 0 0 8px; font-family: var(--display); font-size: 23px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; color: var(--navy); }
 .explain { max-width: 760px; color: var(--muted); font-size: 13.5px; line-height: 1.6; margin: 0 0 18px; }
-.explain b { color: var(--ink); font-weight: 600; }
+.explain b { color: var(--navy); font-weight: 600; }
 
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .tables { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -101,11 +101,11 @@ thead th { color: var(--faint); font-weight: 600; font-size: 11px; text-transfor
 tbody tr:last-child td { border-bottom: none; }
 td.num { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
 td.date { color: var(--muted); white-space: nowrap; }
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+a { color: var(--navy); text-decoration: none; }
+a:hover { color: var(--gold-deep); text-decoration: underline; }
 
 .foot {
-  margin-top: 50px; padding-top: 22px; border-top: 2px solid var(--ink);
+  margin-top: 50px; padding-top: 22px; border-top: 2px solid var(--navy);
   color: var(--faint); font-size: 12.5px; line-height: 1.65; max-width: 940px;
 }
 
@@ -114,5 +114,4 @@ a:hover { text-decoration: underline; }
   .kpis { grid-template-columns: repeat(2, 1fr); }
   .grid2, .tables { grid-template-columns: 1fr; }
   .hero-top { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .hero-meta { text-align: left; }
 }

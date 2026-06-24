@@ -31,7 +31,6 @@ export default function App() {
   const meanVal = avg(arts.map((a) => a.valence))
   const meanTone = avg(arts.map((a) => a.tone))
   const pctNeg = arts.length ? Math.round(arts.filter((a) => a.valence <= -0.15).length / arts.length * 100) : 0
-  const span = `${data.meta.window.after.slice(0, 7)} → ${data.meta.window.before.slice(0, 7)}`
 
   return (
     <div className="page">
@@ -41,15 +40,10 @@ export default function App() {
             <div className="brand">
               <span className="mark" aria-hidden="true">
                 <svg viewBox="0 0 32 32" fill="none">
-                  <path d="M4 19c3-5 6.5-5 9.5 0s6.5 5 9.5 0 6-4 5-4" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" />
+                  <path d="M4 19c3-5 6.5-5 9.5 0s6.5 5 9.5 0 6-4 5-4" stroke="#0b2439" strokeWidth="2.6" strokeLinecap="round" />
                 </svg>
               </span>
               <span className="brand-name">The Current</span>
-            </div>
-            <div className="hero-meta">
-              <div><b>{data.meta.n_scored.toLocaleString()}</b> articles scored</div>
-              <div>{span}</div>
-              <div>scored by {data.meta.model}</div>
             </div>
           </div>
           <h1 className="hero-title">Sentiment of<br />Coverage</h1>

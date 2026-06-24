@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import EChart from './EChart'
 import { toTime, rolling, monthlyMean } from '../lib/aggregate'
 
-const POS = '#2f7d5b', NEG = '#c1432e', NEU = '#b8b2a4', ACCENT = '#46403a'
+const POS = '#2f7d5b', NEG = '#c1432e', NEU = '#9fb0bb', ACCENT = '#294257'
 
 export default function TrendChart({ articles }) {
   const option = useMemo(() => {
@@ -35,12 +35,12 @@ export default function TrendChart({ articles }) {
           // The dots — bigger, brighter, and they pop on hover so they're easy to target.
           name: 'articles', type: 'scatter', data: scatter, symbolSize: 6, large: false, z: 2,
           itemStyle: {
-            opacity: 0.45,
+            opacity: 0.38,
             color: (p) => (p.value[1] > 0.15 ? POS : p.value[1] < -0.15 ? NEG : NEU),
           },
           emphasis: { scale: 2.2, itemStyle: { opacity: 1, borderColor: '#fff', borderWidth: 1 } },
           markArea: {
-            silent: true, itemStyle: { color: 'rgba(150,150,145,0.10)' },
+            silent: true, itemStyle: { color: 'rgba(130,138,146,0.15)' },
             data: [[{ yAxis: -0.15 }, { yAxis: 0.15 }]],
           },
           markLine: {

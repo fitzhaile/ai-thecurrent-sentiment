@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import EChart from './EChart'
 
-const POS = '#2f7d5b', NEG = '#c1432e', NEU = '#b6b6af'
+const POS = '#2f7d5b', NEG = '#c1432e', NEU = '#9fb0bb'
 
 // Valence (x) vs tone (y). The point: a wide horizontal spread with a narrow
 // vertical band means the two dimensions were measured independently — tone did
