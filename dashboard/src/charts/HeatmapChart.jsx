@@ -15,9 +15,10 @@ export default function HeatmapChart({ articles }) {
       xAxis: { type: 'category', data: months, axisLabel: { rotate: 45, fontSize: 10 }, splitArea: { show: true } },
       yAxis: { type: 'category', data: sections, axisLabel: { fontSize: 11 }, splitArea: { show: true } },
       visualMap: {
-        min: -0.5, max: 0.5, calculable: true, orient: 'horizontal', left: 'center', bottom: 8,
-        inRange: { color: ['#c1432e', '#f1efe9', '#2f7d5b'] }, text: ['positive', 'negative'],
-        itemWidth: 14,
+        // dimension: 2 -> color by valence (the 3rd value), NOT the article count (4th).
+        min: -0.5, max: 0.5, dimension: 2, calculable: true, orient: 'horizontal', left: 'center', bottom: 8,
+        inRange: { color: ['#bc4636', '#f1ece2', '#2f7d5b'] }, text: ['positive', 'negative'],
+        itemWidth: 14, textStyle: { color: '#6f6a61' },
       },
       series: [{
         type: 'heatmap', data, label: { show: false },
