@@ -16,11 +16,13 @@ dist/
 
 # Regenerable full-text cache (also avoids committing article bodies); recreate with scrape.py
 data/articles.json
-data/batch_id.txt
+data/*_articles.json
+data/*batch_id.txt
 
 # Dev artifacts
 .playwright-mcp/
 dash-*.png
+thecurrent-site.png
 
 # OS
 .DS_Store

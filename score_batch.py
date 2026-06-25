@@ -19,6 +19,7 @@ import os
 import re
 import sys
 import time
+from pathlib import Path
 
 import anthropic
 from anthropic.types.message_create_params import MessageCreateParamsNonStreaming
@@ -28,10 +29,13 @@ from score import RUBRIC, SCHEMA, MODEL, MIN_WORDS, PRICE_IN, PRICE_OUT, load_en
 
 IDFILE = ROOT / "data" / "batch_id.txt"
 OUTFILE = ROOT / "data" / "scores.json"
+ARTICLES_FILE = ROOT / "data" / "articles.json"
+EXCLUDE_SECTIONS = set()       # sections to skip as non-journalism (e.g. photo galleries)
+EXCLUDE_AUTHOR_PREFIXES = ()   # skip bylines starting with any of these
 
 
 def load_articles():
-    return json.loads((ROOT / "data" / "articles.json").read_text())["articles"]
+    return json.loads(ARTICLES_FILE.read_text())["articles"]
 
 
 def existing_scores():
@@ -45,6 +49,10 @@ def build_requests(articles, done_ids):
     reqs = []
     for a in articles:
         if a["word_count"] < MIN_WORDS or a["id"] in done_ids:
+            continue
+        if a.get("section") in EXCLUDE_SECTIONS:
+            continue
+        if any((a.get("author") or "").startswith(p) for p in EXCLUDE_AUTHOR_PREFIXES):
             continue
         user = f"Headline: {a['title']}\n\nArticle:\n{a['text']}"
         reqs.append(Request(
@@ -141,9 +149,21 @@ def collect(client, articles):
 
 
 def main():
+    global ARTICLES_FILE, OUTFILE, IDFILE, EXCLUDE_SECTIONS, EXCLUDE_AUTHOR_PREFIXES
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", nargs="?", default="auto", choices=["submit", "collect", "auto"])
+    ap.add_argument("--articles", default=str(ARTICLES_FILE))
+    ap.add_argument("--out", default=str(OUTFILE))
+    ap.add_argument("--idfile", default=str(IDFILE))
+    ap.add_argument("--exclude-sections", default="", help="comma-separated sections to skip")
+    ap.add_argument("--exclude-author-prefix", action="append", default=[],
+                    help="skip bylines starting with this string (repeatable)")
     args = ap.parse_args()
+    ARTICLES_FILE = Path(args.articles)
+    OUTFILE = Path(args.out)
+    IDFILE = Path(args.idfile)
+    EXCLUDE_SECTIONS = {s.strip() for s in args.exclude_sections.split(",") if s.strip()}
+    EXCLUDE_AUTHOR_PREFIXES = tuple(args.exclude_author_prefix)
     load_env()
     if not os.environ.get("ANTHROPIC_API_KEY"):
         sys.exit("ANTHROPIC_API_KEY not found — aborting before any spend")
