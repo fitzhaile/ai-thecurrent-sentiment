@@ -11,7 +11,8 @@ import ComparisonView from './ComparisonView'
 export default function App() {
   const [data, setData] = useState(null)
   const [section, setSection] = useState('all')
-  const [view, setView] = useState('compare')
+  const [view, setView] = useState('current')
+  const [ma, setMa] = useState(7)
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}data.json`)
@@ -33,6 +34,7 @@ export default function App() {
   const meanVal = avg(arts.map((a) => a.valence))
   const meanTone = avg(arts.map((a) => a.tone))
   const pctNeg = arts.length ? Math.round(arts.filter((a) => a.valence <= -0.15).length / arts.length * 100) : 0
+  const pctPos = arts.length ? Math.round(arts.filter((a) => a.valence >= 0.15).length / arts.length * 100) : 0
 
   return (
     <div className="page">
@@ -62,7 +64,7 @@ export default function App() {
             </>
           ) : (
             <>
-              <h1 className="hero-title">Sentiment of<br />Coverage</h1>
+              <h1 className="hero-title">Sentiment of Coverage</h1>
               <p className="standfirst">
                 Two years of the newsroom's reporting, read and scored by Claude — every story rated for how positive
                 or negative it feels, and how slanted the writing is.
@@ -90,44 +92,68 @@ export default function App() {
           <Kpi label="Articles" value={arts.length.toLocaleString()} />
           <Kpi label="Mean valence" value={meanVal.toFixed(2)} sign={meanVal} />
           <Kpi label="Mean tone" value={meanTone.toFixed(2)} sign={meanTone} />
-          <Kpi label="Negative" value={`${pctNeg}%`} />
+          <Kpi label="Negative" value={`${pctNeg}%`} sign={-1} />
+          <Kpi label="Positive" value={`${pctPos}%`} sign={1} />
         </div>
 
         <p className="intro">
           Each article was scored by Claude on two independent −1‑to‑+1 scales: <b>valence</b> — how positive or
           negative it feels overall — and <b>tone</b> — how slanted the <i>writing</i> is, regardless of how grim
-          the topic. Straight reporting of a tragedy is strongly negative valence but roughly neutral tone. A
-          slightly‑negative mean valence with near‑zero tone is typical of accountability‑focused local news:
-          hard topics, even‑handed reporting.
+          the topic. Straight reporting of a tragedy is strongly negative valence but roughly neutral tone. The
+          {' '}<b>Negative</b> and <b>Positive</b> tiles count articles past ±0.15 — they don't add to 100%, since
+          the rest (often the largest share) sit in the <b>neutral</b> middle: routine, procedural coverage.
         </p>
 
         <Group n="01" label="Sentiment over time">
+          <div className="ma-control">
+            <span className="ma-label">Moving average</span>
+            {[7, 10, 28].map((d) => (
+              <button key={d} className={ma === d ? 'on' : ''} onClick={() => setMa(d)}>{d}-day</button>
+            ))}
+          </div>
           <div className="card">
             <h3>Valence over time</h3>
             <p className="explain">
-              Each dot is one article on the day it ran; the dark line is a <b>7‑day rolling average</b> that
-              smooths daily swings; the grey band is neutral. Read the line, not single dots — a sustained dip
-              marks a heavier stretch of news. Drag the slider to zoom; hover a dot for the story.
+              Each dot is one article on the day it ran; the dark line is a <b>{ma}-day rolling average</b> that
+              smooths daily swings; the grey band is neutral. Read the line, not single dots. Drag the slider to
+              zoom; hover a dot for the story.
             </p>
-            <TrendChart articles={arts} />
+            <TrendChart articles={arts} field="valence" windowDays={ma} />
+          </div>
+          <div className="card">
+            <h3>Tone over time</h3>
+            <p className="explain">
+              The same articles on <b>tone</b> — the writing's slant, independent of topic. It should hug <b>0</b>
+              {' '}(straight reporting) even while valence dips; a sustained move off zero would mean the writing
+              itself turning critical or boosterish, not just the news getting heavier.
+            </p>
+            <TrendChart articles={arts} field="tone" windowDays={ma} />
           </div>
           <div className="grid2">
             <div className="card">
               <h3>Valence distribution</h3>
               <p className="explain">
-                How the {data.meta.n_scored.toLocaleString()} scores spread out — a pile‑up near zero (neutral
+                How the {data.meta.n_scored.toLocaleString()} valence scores spread — a pile‑up near zero (neutral
                 civic coverage) with a long <b>negative tail</b> (courts, public safety, accountability).
               </p>
-              <DistributionChart articles={arts} />
+              <DistributionChart articles={arts} field="valence" />
             </div>
             <div className="card">
-              <h3>Articles per month</h3>
+              <h3>Tone distribution</h3>
               <p className="explain">
-                Publishing volume — context for the trend. A month's average is more trustworthy when it sits on
-                more articles.
+                Tone clusters tightly at <b>0</b> — most reporting is written straight. The thin tails are the
+                occasional pointed investigation (left) or celebratory feature (right).
               </p>
-              <VolumeChart articles={arts} />
+              <DistributionChart articles={arts} field="tone" />
             </div>
+          </div>
+          <div className="card">
+            <h3>Articles per month</h3>
+            <p className="explain">
+              Publishing volume — context for the trends above. A month's average is more trustworthy when it
+              sits on more articles.
+            </p>
+            <VolumeChart articles={arts} />
           </div>
         </Group>
 

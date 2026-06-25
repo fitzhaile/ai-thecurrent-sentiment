@@ -34,26 +34,26 @@ body {
   background-image: radial-gradient(120% 130% at 88% -30%, rgba(235, 178, 69, .20), transparent 56%);
   border-bottom: 3px solid var(--gold);
 }
-.hero-inner { max-width: 1140px; margin: 0 auto; padding: 22px 32px 34px; }
+.hero-inner { max-width: 1140px; margin: 0 auto; padding: 14px 32px 20px; }
 .hero-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand { display: flex; align-items: center; gap: 12px; }
 .mark { width: 38px; height: 38px; border-radius: 11px; background: var(--gold); display: grid; place-items: center; box-shadow: 0 6px 16px -4px rgba(235, 178, 69, .5); }
 .mark svg { width: 22px; height: 22px; }
 .brand-name { font: 600 14px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--cream); }
 .hero-title {
-  margin: 18px 0 0; font-family: var(--display); font-weight: 600;
-  font-size: clamp(30px, 4.8vw, 48px); line-height: 1.0; letter-spacing: -0.02em; color: var(--cream);
+  margin: 10px 0 0; font-family: var(--display); font-weight: 600;
+  font-size: clamp(22px, 3.2vw, 33px); line-height: 1.05; letter-spacing: -0.02em; color: var(--cream);
   animation: rise .7s .05s both;
 }
 .standfirst {
-  margin: 13px 0 0; max-width: 580px; font-size: 16px; line-height: 1.5; color: rgba(238, 242, 246, .82);
+  margin: 8px 0 0; max-width: 580px; font-size: 14.5px; line-height: 1.5; color: rgba(238, 242, 246, .82);
   animation: rise .7s .16s both;
 }
 
 /* ── Body ──────────────────────────────────────────────────── */
-.app { max-width: 1140px; margin: 0 auto; padding: 0 32px 110px; }
+.app { max-width: 1140px; margin: 0 auto; padding: 26px 32px 110px; }
 
-.toolbar { display: flex; align-items: center; gap: 16px; padding: 24px 0 4px; flex-wrap: wrap; }
+.toolbar { display: flex; align-items: center; gap: 16px; padding: 0 0 4px; flex-wrap: wrap; }
 .toolbar label { font-size: 14px; font-weight: 500; color: var(--navy); }
 .toolbar select {
   font: inherit; padding: 8px 14px; border: 1px solid var(--line); border-radius: 10px;
@@ -63,7 +63,7 @@ body {
 .muted { color: var(--muted); font-size: 13px; }
 
 /* KPI stat cards */
-.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin: 16px 0 18px; animation: rise .6s .1s both; }
+.kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin: 16px 0 18px; animation: rise .6s .1s both; }
 .kpi {
   position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--line);
   border-radius: 16px; padding: 24px 22px 20px; box-shadow: var(--shadow);
@@ -74,6 +74,12 @@ body {
 
 .intro { max-width: 740px; color: var(--muted); font-size: 15px; line-height: 1.66; margin: 6px 0 0; animation: rise .6s .2s both; }
 .intro b { color: var(--navy); font-weight: 600; }
+
+.ma-control { display: flex; align-items: center; gap: 8px; margin: 2px 0 16px; flex-wrap: wrap; }
+.ma-label { font-size: 11.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-right: 4px; }
+.ma-control button { font: 600 12.5px/1 var(--sans); color: var(--navy); background: var(--card); border: 1px solid var(--line); padding: 8px 13px; border-radius: 8px; cursor: pointer; }
+.ma-control button.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+.ma-control button:not(.on):hover { border-color: var(--gold-deep); }
 
 /* Numbered report sections */
 .group { margin-top: 50px; animation: rise .6s both; }
