@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import ComparisonScatter from './charts/ComparisonScatter'
 import ComparisonHist from './charts/ComparisonHist'
+import ComparisonTrend from './charts/ComparisonTrend'
 import { avg } from './lib/aggregate'
 
 export default function ComparisonView() {
@@ -62,7 +63,21 @@ export default function ComparisonView() {
       </section>
 
       <section className="group">
-        <p className="eyebrow"><span className="num">02</span><span className="label">Tone — the topic-independent axis</span></p>
+        <p className="eyebrow"><span className="num">02</span><span className="label">The gap over time</span></p>
+        <div className="card">
+          <h3>Monthly mean valence, both outlets</h3>
+          <p className="explain">
+            Each outlet's average valence by month across the two years. Don't read the month‑to‑month wobble —
+            read the <b>persistent gap</b>: The Current sits below neutral month after month, Connect Savannah
+            well above it. The difference isn't a one‑off period; it's how each newsroom consistently reads. Drag
+            the slider to zoom a stretch.
+          </p>
+          <ComparisonTrend data={data} field="valence" />
+        </div>
+      </section>
+
+      <section className="group">
+        <p className="eyebrow"><span className="num">03</span><span className="label">Tone — the topic-independent axis</span></p>
         <div className="card">
           <h3>How slanted the writing is</h3>
           <p className="explain">
@@ -75,7 +90,7 @@ export default function ComparisonView() {
       </section>
 
       <section className="group">
-        <p className="eyebrow"><span className="num">03</span><span className="label">Valence — overall positivity</span></p>
+        <p className="eyebrow"><span className="num">04</span><span className="label">Valence — overall positivity</span></p>
         <div className="card">
           <h3>How positive or negative the coverage feels</h3>
           <p className="explain">
