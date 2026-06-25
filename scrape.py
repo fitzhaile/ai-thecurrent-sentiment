@@ -65,7 +65,7 @@ def byline(post):
     return str(post.get("author"))
 
 
-def fetch_posts(after, before):
+def fetch_posts(after, before, base):
     """Page through /posts in the window (100/page). ~8 requests for ~716 posts."""
     posts, page = [], 1
     fields = "id,date,link,title,content,excerpt,author,categories,yoast_head_json"
@@ -75,7 +75,7 @@ def fetch_posts(after, before):
             "orderby": "date", "order": "desc", "_fields": fields,
         })
         try:
-            data, headers = get(f"{BASE}/posts?{q}")
+            data, headers = get(f"{base}/posts?{q}")
         except urllib.error.HTTPError as e:
             if e.code == 400:  # paged past the last page
                 break
@@ -93,7 +93,7 @@ def fetch_posts(after, before):
     return posts
 
 
-def resolve_names(endpoint, ids):
+def resolve_names(endpoint, ids, base):
     """Map WP object ids -> display names (used for categories). Best-effort."""
     names, ids = {}, [i for i in ids if i]
     for i in range(0, len(ids), 100):
@@ -101,7 +101,7 @@ def resolve_names(endpoint, ids):
         q = urllib.parse.urlencode(
             {"include": ",".join(map(str, chunk)), "per_page": 100, "_fields": "id,name"})
         try:
-            data, _ = get(f"{BASE}/{endpoint}?{q}")
+            data, _ = get(f"{base}/{endpoint}?{q}")
             for o in data:
                 names[o["id"]] = html.unescape(o.get("name", ""))
         except urllib.error.HTTPError as e:
@@ -115,10 +115,13 @@ def main():
     ap.add_argument("--after", default=DEFAULT_AFTER)
     ap.add_argument("--before", default=DEFAULT_BEFORE)
     ap.add_argument("--out", default="data/articles.json")
+    ap.add_argument("--base", default=BASE, help="WP REST API base, e.g. https://site/wp-json/wp/v2")
+    ap.add_argument("--source", default="The Current GA", help="human-readable outlet label")
     args = ap.parse_args()
 
-    print(f"Scraping The Current GA — published {args.after} .. {args.before}")
-    posts = {p["id"]: p for p in fetch_posts(args.after, args.before)}  # dedup by id
+    print(f"Scraping {args.source} — published {args.after} .. {args.before}")
+    print(f"  API base: {args.base}")
+    posts = {p["id"]: p for p in fetch_posts(args.after, args.before, args.base)}  # dedup by id
     posts = list(posts.values())
     if not posts:
         print("No posts returned — check the window or the site. Nothing written.")
@@ -126,7 +129,7 @@ def main():
 
     cat_ids = sorted({c for p in posts for c in (p.get("categories") or [])})
     print(f"Resolving {len(cat_ids)} categories; bylines come from Yoast metadata ...")
-    cats = resolve_names("categories", cat_ids)
+    cats = resolve_names("categories", cat_ids, args.base)
 
     articles = []
     for p in posts:
@@ -148,7 +151,7 @@ def main():
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({
-        "source": "thecurrentga.org WordPress REST API",
+        "source": f"{args.source} — WordPress REST API ({args.base})",
         "window": {"after": args.after, "before": args.before},
         "note": "publication dates are the authoritative WP `date` field; bylines from Yoast metadata",
         "count": len(articles),
