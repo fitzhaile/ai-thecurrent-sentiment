@@ -6,10 +6,12 @@ import SectionChart from './charts/SectionChart'
 import ToneScatter from './charts/ToneScatter'
 import HeatmapChart from './charts/HeatmapChart'
 import { avg, sections } from './lib/aggregate'
+import ComparisonView from './ComparisonView'
 
 export default function App() {
   const [data, setData] = useState(null)
   const [section, setSection] = useState('all')
+  const [view, setView] = useState('compare')
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}data.json`)
@@ -45,15 +47,33 @@ export default function App() {
               </span>
               <span className="brand-name">The Current</span>
             </div>
+            <nav className="hero-nav">
+              <button className={view === 'compare' ? 'on' : ''} onClick={() => setView('compare')}>vs Connect Savannah</button>
+              <button className={view === 'current' ? 'on' : ''} onClick={() => setView('current')}>The Current, in full</button>
+            </nav>
           </div>
-          <h1 className="hero-title">Sentiment of<br />Coverage</h1>
-          <p className="standfirst">
-            Two years of the newsroom's reporting, read and scored by Claude — every story rated for how positive
-            or negative it feels, and how slanted the writing is.
-          </p>
+          {view === 'compare' ? (
+            <>
+              <h1 className="hero-title">Two newsrooms,<br />one coast</h1>
+              <p className="standfirst">
+                The Current's accountability reporting vs. Connect Savannah's alt‑weekly coverage — both read and
+                scored by Claude on the same two scales.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="hero-title">Sentiment of<br />Coverage</h1>
+              <p className="standfirst">
+                Two years of the newsroom's reporting, read and scored by Claude — every story rated for how positive
+                or negative it feels, and how slanted the writing is.
+              </p>
+            </>
+          )}
         </div>
       </header>
 
+      {view === 'compare' && <ComparisonView />}
+      {view === 'current' && (
       <main className="app">
         <div className="toolbar">
           <label>
@@ -173,6 +193,7 @@ export default function App() {
           careful model read — stable across re‑runs and validated, but an annotator's judgment, not ground truth.
         </footer>
       </main>
+      )}
     </div>
   )
 }
