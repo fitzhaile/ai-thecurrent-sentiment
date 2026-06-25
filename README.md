@@ -1,102 +1,150 @@
-# The Current — Sentiment Dashboard
+# The Current — Sentiment & Themes Dashboard
 
-Sentiment analysis of every article [The Current](https://thecurrentga.org) (a
-coastal-Georgia nonprofit newsroom) published over the trailing 12 months, scored by
-Claude Opus 4.8 and presented as an interactive dashboard.
+Sentiment analysis of every article [The Current](https://thecurrentga.org) — a
+coastal‑Georgia nonprofit newsroom — published over the trailing **two years**, scored
+by **Claude Opus 4.8** on two independent scales, clustered into themes with
+**BERTopic**, and presented as an interactive static dashboard.
 
-- **716** articles in the window (2025‑06‑23 → 2026‑06‑23); **707** scored, **9**
-  excluded as non-substantive (election-results stubs under 50 words).
-- Each article gets a **valence** (overall positive/negative, −1…+1) and an
-  *independent* **tone** (editorial slant of the writing, −1…+1), plus a topic label,
-  a confidence level, and a one-line rationale.
+- **1,432** articles scored over the window **2024‑06‑23 → 2026‑06‑23**; sub‑50‑word
+  stubs (results/data fragments) excluded.
+- Each article gets a **valence** (overall positive/negative a reader takes away, −1…+1)
+  and an *independent* **tone** (editorial slant of the writing, −1…+1), plus a topic
+  label, a confidence level, and a one‑line rationale.
+- Headline split (valence past ±0.15): **50% negative · 26% neutral · 24% positive**;
+  mean valence −0.12, mean tone −0.02 (near‑neutral writing on hard topics).
 
 ## Project layout
 
 ```
-scrape.py          WordPress REST API  ->  data/articles.json  (full text + metadata)
-score.py           calibration scorer + THE RUBRIC (single source of truth)
-score_batch.py     full-corpus scoring via the Batch API  ->  data/scores.json
-validate.py        QA: distributions, tone/valence separation, by-section/author, extremes, stability
-build_data.py      scores.json  ->  dashboard/public/data.json  (metadata + scores; no full text)
-data/              articles.json (gitignored), scores.json, calibration.json
-dashboard/         Vite + React + ECharts app (the deployable artifact)
-.env               ANTHROPIC_API_KEY=...   (gitignored AND Dropbox-ignored)
+scrape.py            WordPress REST API -> data/articles.json   (full text + metadata; any WP site via --base)
+score.py             calibration scorer + THE RUBRIC (single source of truth for the scoring prompt)
+score_batch.py       full-corpus scoring via the Batch API -> data/scores.json   (incremental, resumable)
+build_data.py        scores.json -> dashboard/public/data.json      (metadata + scores; no full text)
+build_topics.py      BERTopic theme discovery -> dashboard/public/themes.json
+build_comparison.py  two outlets -> dashboard/public/comparison.json  (The Current vs another newsroom)
+validate.py          QA: distributions, tone/valence separation, by-section/author, extremes, stability
+requirements.txt     build-time Python deps (anthropic, bertopic); scrape.py is stdlib-only
+render.yaml          Render Blueprint (static-site deploy)
+data/                scores.json, connect_scores.json, calibration.json   (articles.json + *_articles.json gitignored)
+dashboard/           Vite + React 19 + ECharts 6 app (the deployable artifact)
+.env                 ANTHROPIC_API_KEY=...   (gitignored)
 ```
+
+The build-time Python tools produce JSON that the dashboard reads; the deployed app is
+a **static site with no backend and no ML at runtime**.
 
 ## Re-running the pipeline
 
-Prereqs: Python 3, Node 20+, and `ANTHROPIC_API_KEY` in `.env` (copy from `.env.example`).
-The Python venv lives at `.venv` — create with
-`python3 -m venv .venv && .venv/bin/pip install anthropic`.
+Prereqs: Python 3.10+, Node 20+, and `ANTHROPIC_API_KEY` in `.env` (copy `.env.example`).
 
 ```bash
-# 1. Scrape (no API key, no cost). Change the window for a different period:
-python3 scrape.py
-python3 scrape.py --after 2025-01-01T00:00:00 --before 2026-01-01T00:00:00
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt     # anthropic + bertopic (BERTopic pulls a large ML stack)
 
-# 2. (optional) Calibrate the rubric on ~20 articles first (~$0.50):
+# 1. Scrape (stdlib, no API key, no cost). Default window = two years back:
+python3 scrape.py
+#    Any WordPress site:  --base https://site/wp-json/wp/v2 --source "Name" --out data/x_articles.json
+
+# 2. (optional) Calibrate the rubric on ~20 stratified articles first (~$0.50):
 .venv/bin/python score.py
 
-# 3. Score the full corpus via the Batch API (~$6 for ~700 articles):
-.venv/bin/python score_batch.py        # submit -> wait -> data/scores.json  (resumable)
+# 3. Score the full corpus via the Batch API (incremental — only unscored articles).
+#    The Current's two years cost ~$13 across two runs:
+.venv/bin/python score_batch.py               # submit -> poll -> data/scores.json
 
 # 4. QA the scores:
 .venv/bin/python validate.py
 
-# 5. Rebuild the dashboard's data + site:
-.venv/bin/python build_data.py
-npm --prefix dashboard run build       # -> dashboard/dist (static; deploy anywhere)
+# 5. Build the dashboard's data:
+.venv/bin/python build_data.py                # -> dashboard/public/data.json
+.venv/bin/python build_topics.py              # -> dashboard/public/themes.json (BERTopic)
+
+# 6. Build the site:
+npm --prefix dashboard install
+npm --prefix dashboard run build              # -> dashboard/dist  (static; deploy anywhere)
+```
+
+**Scoring a second outlet** (for the comparison view):
+
+```bash
+python3 scrape.py --base https://www.example.com/wp-json/wp/v2 --source "Example" --out data/example_articles.json
+.venv/bin/python score_batch.py --articles data/example_articles.json \
+    --out data/example_scores.json --idfile data/example_batch_id.txt \
+    --exclude-sections "Listings" --exclude-author-prefix "Photographer Name"   # optional non-journalism filters
+.venv/bin/python build_comparison.py          # -> dashboard/public/comparison.json
 ```
 
 ## The dashboard
 
 ```bash
 npm --prefix dashboard install
-npm --prefix dashboard run dev         # local dev server
-npm --prefix dashboard run build       # production build -> dashboard/dist
+npm --prefix dashboard run dev      # local dev server
+npm --prefix dashboard run build    # production build -> dashboard/dist
 ```
 
-`dashboard/dist` is a self-contained static site (relative asset paths via
-`base: './'`), deployable to any static host — Netlify, Vercel, Cloudflare Pages,
-GitHub Pages, or a plain web server. No backend.
+`dashboard/dist` is a self‑contained static site (relative asset paths via `base: './'`),
+deployable to any static host. The React app just reads the prebuilt JSON.
+
+**Two views, toggled in the masthead:**
+
+- **The Current, in full** — KPIs (articles, mean valence/tone, and a **Negative ·
+  Neutral · Positive** split that sums to 100%); **valence‑ and tone‑over‑time**
+  (per‑article scatter + a **7 / 10 / 28‑day** moving average, switchable, + monthly
+  mean, with a date‑zoom slider); valence and tone distributions; a valence‑vs‑tone
+  scatter; mean valence by section and by byline; a **BERTopic "discovered themes"**
+  breakdown; a section × month heatmap; and the most positive/negative articles. A
+  Section filter scopes the per‑article views.
+- **Comparison** — The Current's own reporting vs another newsroom on the same rubric,
+  designed around **tone** (the topic‑independent axis): side‑by‑side stat cards, an
+  overlaid valence‑vs‑tone scatter with per‑outlet centroids, a monthly trend, and
+  normalized tone/valence distributions. *(The bundled comparison data is a placeholder
+  — see "comparison outlet" below.)*
 
 ### Deploy to Render
 
 A `render.yaml` blueprint is included. On Render: **New + → Blueprint**, connect this
-repo, and apply — it builds `dashboard/` and publishes `dashboard/dist`. Or create a
-**Static Site** manually: Build Command `cd dashboard && npm install && npm run build`,
-Publish Directory `dashboard/dist`, env var `NODE_VERSION=20.19.5`.
-
-**Views:** valence trend (per-article scatter + 28‑day rolling average + monthly mean,
-with a date-zoom slider), distribution, monthly volume, valence‑vs‑tone scatter, mean
-valence by section and by byline, a section × month heatmap, and the most
-positive/negative articles. A Section filter scopes the per-article views.
+repo, and apply — it builds `dashboard/` and publishes `dashboard/dist`. Or a manual
+**Static Site**: Build Command `cd dashboard && npm install && npm run build`, Publish
+Directory `dashboard/dist`, env var `NODE_VERSION=20.19.5`.
 
 ## Methodology
 
-- **Model:** Claude Opus 4.8, adaptive thinking on, structured JSON output, a fixed
-  rubric (in `score.py`). One pass per article.
-- **valence** (−1…+1): overall positivity/negativity a reader takes away (topic +
-  framing). **tone** (−1…+1): the writing's *own editorial slant*, independent of how
-  grim the topic is — straight reporting of a tragedy is negative valence but ~0 tone.
-- **Validation** (`validate.py`): valence↔tone correlation **r = 0.64** (separated, not
-  collapsed); section means track intuition (Courts/Public Safety most negative,
-  Community/Education most positive); the same 20 articles scored in two independent
-  runs differed by only **Δ0.04** (stable). Actual full-run cost: **$6.11**.
+- **Sentiment — Claude Opus 4.8** (the rubric in `score.py`, adaptive thinking on,
+  structured JSON output, one pass per article, run through the Batch API). It is *not*
+  a lexicon or fine‑tuned classifier: a single LLM reads each full article against a
+  fixed rubric and explains its score. **valence** weighs subject + framing together;
+  **tone** is the writing's own editorial slant, deliberately independent of how grim
+  the topic is — a sober report of a fatal flood is strongly negative valence but ~0 tone.
+- **Themes — BERTopic** (`build_topics.py`): MiniLM sentence embeddings → seeded UMAP →
+  HDBSCAN → stopword‑aware c‑TF‑IDF labels. Bottom‑up, unsupervised theme discovery
+  (29 themes over the 1,432 articles), a data‑driven complement to the editor sections.
+- **Validation** (`validate.py`): valence↔tone correlation **r ≈ 0.64** (the two axes
+  are genuinely separate, not collapsed); section means track intuition (Courts / Health
+  / Public Safety most negative, Education / Community positive); re‑scoring the same
+  articles drifted only **Δ ≈ 0.04**.
 
 ## Known limitations / trade-offs
 
-- Scores are **model-derived**, not ground truth. They're stable run-to-run (Δ0.04) and
-  validate well, but treat them as a careful annotator's read, not fact.
-- **Tone** reads pointed *investigative* framing as mildly negative (−0.1…−0.3) — a
-  deliberate rubric choice (it's real framing). To make tone capture only explicit
-  opinion, tighten the rubric in `score.py` and re-score.
-- **9 short articles excluded** (results/data stubs < 50 words; no prose to score).
-  Threshold is `MIN_WORDS` in `score.py`; the count is shown in the dashboard footer.
-- **Bylines** come from Yoast metadata, so wire pieces show their true byline
-  (e.g. "Ty Tagami/Capitol Beat News Service") rather than the posting desk account.
-- `data/articles.json` (full article text) is **gitignored** — a regenerable cache of
-  copyrighted content. Run `scrape.py` to recreate it.
-- Dashboard JS is ~434 KB gzip (full ECharts import). Fine for most uses; to shrink,
-  switch `dashboard/src/charts/EChart.jsx` to `echarts/core` with only the used
-  charts/components registered.
+- Scores are **model‑derived**, not ground truth — a careful annotator's read. Stable
+  run‑to‑run and validated, but treat them as judgment, not fact.
+- **Tone** reads pointed *investigative* framing as mildly negative — a deliberate rubric
+  choice (it's real framing). Tighten the rubric in `score.py` and re‑score to make tone
+  capture only explicit opinion.
+- **Comparison outlet:** the bundled comparison is **Connect Savannah**, whose online
+  journalism turned out to concentrate in mid‑2024 and thin out afterward — usable for a
+  cross‑sectional comparison but not a two‑year trend. A steadier replacement (a
+  crawlable outlet with even coverage) is being selected; swap it by scoring the new
+  outlet and re‑running `build_comparison.py`. Many candidates (savannahnow, Georgia
+  Recorder, Decaturish, the Savannah TV stations …) **block Claude in `robots.txt`** and
+  are not crawled.
+- **Wire content:** roughly **44%** of The Current's feed is republished wire (Georgia
+  Recorder, Capitol Beat, AP, GPB …). The single‑outlet dashboard includes it as
+  published; the comparison **excludes** it (`build_comparison.py`) to weigh original
+  reporting only. Bylines come from Yoast metadata, so wire pieces show their true byline
+  (e.g. "Ty Tagami/Capitol Beat News Service").
+- **Short stubs (< 50 words)** are excluded (`MIN_WORDS` in `score.py`); the count is in
+  the dashboard footer.
+- `data/articles.json` and any per‑outlet `*_articles.json` (full text) are **gitignored**
+  — regenerable caches of copyrighted content. Run `scrape.py` to recreate them.
+- The dashboard imports ECharts in full (~430 KB gzip). To shrink, register only the used
+  charts/components from `echarts/core` in `dashboard/src/charts/EChart.jsx`.
