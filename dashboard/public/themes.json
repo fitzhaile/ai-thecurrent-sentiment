@@ -1,0 +1,588 @@
+{
+  "method": "BERTopic (all-MiniLM-L6-v2 embeddings, UMAP+HDBSCAN, seeded)",
+  "n_docs": 1432,
+  "n_themes": 29,
+  "n_unclustered": 374,
+  "themes": [
+    {
+      "id": 0,
+      "label": "health · care · medicaid",
+      "keywords": [
+        "health",
+        "care",
+        "medicaid",
+        "insurance",
+        "georgia",
+        "health care"
+      ],
+      "size": 92,
+      "mean_valence": -0.299,
+      "mean_tone": -0.077,
+      "examples": [
+        "YOUR DAILY HEALTH NEWS",
+        "Advocate for Georgia pharmacies fired over social media post",
+        "States set minimum staffing levels for nursing homes. Residents suffer when rules are ignored or waived."
+      ]
+    },
+    {
+      "id": 1,
+      "label": "savannah · police · ice",
+      "keywords": [
+        "savannah",
+        "police",
+        "ice",
+        "justin",
+        "current",
+        "taylorthe current"
+      ],
+      "size": 88,
+      "mean_valence": -0.165,
+      "mean_tone": 0.011,
+      "examples": [
+        "Sources: DA to present evidence to grand jury in SPD shooting of Saudi Lee",
+        "For migrants in Georgia, fighting deportation will become harder. Here’s why.",
+        "Savannah to change little-known board after police misconduct cases"
+      ]
+    },
+    {
+      "id": 2,
+      "label": "power · georgia power · energy",
+      "keywords": [
+        "power",
+        "georgia power",
+        "energy",
+        "data",
+        "georgia",
+        "data centers"
+      ],
+      "size": 80,
+      "mean_valence": -0.067,
+      "mean_tone": -0.025,
+      "examples": [
+        "Ga. companies and governments push for faster climate action",
+        "As heat increases so does price of electricity",
+        "New Vogtle reactor back in service after 8-day shutdown"
+      ]
+    },
+    {
+      "id": 3,
+      "label": "students · school · education",
+      "keywords": [
+        "students",
+        "school",
+        "education",
+        "schools",
+        "georgia",
+        "said"
+      ],
+      "size": 78,
+      "mean_valence": 0.086,
+      "mean_tone": 0.003,
+      "examples": [
+        "State superintendent backtracks, says AP African American History class can be funded",
+        "State lawmakers mulling switch of university system to quarters",
+        "Georgia schools chief reverses African American studies ‘mistake’"
+      ]
+    },
+    {
+      "id": 4,
+      "label": "water · wastewater · aquifer",
+      "keywords": [
+        "water",
+        "wastewater",
+        "aquifer",
+        "gallons",
+        "river",
+        "wells"
+      ],
+      "size": 54,
+      "mean_valence": -0.096,
+      "mean_tone": -0.007,
+      "examples": [
+        "Bulloch postpones votes on Hyundai-related water agreements with Bryan",
+        "Bulloch OKs Hyundai-related water agreements despite public concerns",
+        "Brunswick residents join scientists to test water quality near Superfund sites"
+      ]
+    },
+    {
+      "id": 5,
+      "label": "state · governor · candidates",
+      "keywords": [
+        "state",
+        "governor",
+        "candidates",
+        "election",
+        "georgia",
+        "republican"
+      ],
+      "size": 50,
+      "mean_valence": 0.04,
+      "mean_tone": 0.001,
+      "examples": [
+        "Want to run for office? Here’s how to get on future ballots.",
+        "Third party candidates Kennedy Jr., West file petitions to appear on Georgia ballot",
+        "Warnock on Kamala Harris candidacy: ‘My bet is on the prosecutor’"
+      ]
+    },
+    {
+      "id": 7,
+      "label": "election · board · election board",
+      "keywords": [
+        "election",
+        "board",
+        "election board",
+        "state",
+        "rules",
+        "voter"
+      ],
+      "size": 48,
+      "mean_valence": -0.254,
+      "mean_tone": -0.082,
+      "examples": [
+        "Bolstered by new Georgia law, woman challenges around 900 voter registrations in Chatham County",
+        "Georgia election board sets online meeting after state attorney general flagged last vote",
+        "Georgia website that lets people cancel voter registrations briefly displayed personal data"
+      ]
+    },
+    {
+      "id": 6,
+      "label": "tax · income · property",
+      "keywords": [
+        "tax",
+        "income",
+        "property",
+        "income tax",
+        "taxes",
+        "property tax"
+      ],
+      "size": 48,
+      "mean_valence": 0.02,
+      "mean_tone": -0.009,
+      "examples": [
+        "Bill banning stock trading for presidents, vice presidents, Congress members advances",
+        "Three measures on Georgia’s ballot, what they mean",
+        "Georgia measure would cap increases in homes’ taxable value to curb higher property taxes"
+      ]
+    },
+    {
+      "id": 8,
+      "label": "hurricane · brantley · helene",
+      "keywords": [
+        "hurricane",
+        "brantley",
+        "helene",
+        "weather",
+        "storm",
+        "road"
+      ],
+      "size": 42,
+      "mean_valence": -0.248,
+      "mean_tone": -0.013,
+      "examples": [
+        "Slideshow: Historic Butler Island house burns",
+        "Humane Society finds 90 animals shelter from storm",
+        "Hurricane Helene: Updates"
+      ]
+    },
+    {
+      "id": 9,
+      "label": "psc · johnson · commission",
+      "keywords": [
+        "psc",
+        "johnson",
+        "commission",
+        "public service",
+        "service commission",
+        "service"
+      ],
+      "size": 38,
+      "mean_valence": -0.026,
+      "mean_tone": -0.003,
+      "examples": [
+        "U.S. Supreme Court upholds statewide PSC elections in Ga.",
+        "Lawsuit calls for PSC elections as soon as possible",
+        "Want to contact the Georgia Public Service Commission? Here’s how."
+      ]
+    },
+    {
+      "id": 11,
+      "label": "zoning · sapelo · mcintosh",
+      "keywords": [
+        "zoning",
+        "sapelo",
+        "mcintosh",
+        "referendum",
+        "mcintosh county",
+        "county"
+      ],
+      "size": 33,
+      "mean_valence": -0.245,
+      "mean_tone": -0.024,
+      "examples": [
+        "Petition starts process for  county-wide zoning vote on Sapelo’s Hogg Hummock",
+        "McIntosh County must pay penalty or fix assessments",
+        "Update: Petitioners respond to county’s effort to invalidate Sapelo referendum"
+      ]
+    },
+    {
+      "id": 10,
+      "label": "chatham · cook jones · county",
+      "keywords": [
+        "chatham",
+        "cook jones",
+        "county",
+        "cook",
+        "campaign",
+        "district"
+      ],
+      "size": 33,
+      "mean_valence": -0.018,
+      "mean_tone": -0.017,
+      "examples": [
+        "State House candidate’s fundraising letter strikes out",
+        "Chatham district attorney: Republican opponent ‘compromised’ drug investigation",
+        "Q&A: Chatham County District Attorney candidates"
+      ]
+    },
+    {
+      "id": 12,
+      "label": "gun · firearms · said",
+      "keywords": [
+        "gun",
+        "firearms",
+        "said",
+        "laws",
+        "safety",
+        "georgia"
+      ],
+      "size": 31,
+      "mean_valence": -0.252,
+      "mean_tone": -0.032,
+      "examples": [
+        "Federal lawsuit challenges constitutionality of blank check ‘leadership committees’",
+        "Georgia lawmakers reconsider bills to hold adults accountable for firearm safety",
+        "Georgia House Democrats call for legislative special session, but governor unlikely to oblige"
+      ]
+    },
+    {
+      "id": 13,
+      "label": "cumberland · land · development",
+      "keywords": [
+        "cumberland",
+        "land",
+        "development",
+        "island",
+        "county",
+        "camden"
+      ],
+      "size": 30,
+      "mean_valence": -0.235,
+      "mean_tone": -0.087,
+      "examples": [
+        "Georgia PSC to act on Sandersville Railroad owner’s request to condemn land held by Black owners",
+        "Liberty County Commission approves 237 new homes on Colonels Island",
+        "Proposed Cumberland Island land swap raises concerns"
+      ]
+    },
+    {
+      "id": 14,
+      "label": "collins · carter · dooley",
+      "keywords": [
+        "collins",
+        "carter",
+        "dooley",
+        "ossoff",
+        "buddy",
+        "buddy carter"
+      ],
+      "size": 29,
+      "mean_valence": -0.131,
+      "mean_tone": -0.081,
+      "examples": [
+        "The first-ever second gentleman comes to Savannah",
+        "Carter shows no signs of ‘runnin’ scared’",
+        "On the verge of a government shutdown, Carter votes for temporary spending bill"
+      ]
+    },
+    {
+      "id": 15,
+      "label": "shrimp · restaurants · ports",
+      "keywords": [
+        "shrimp",
+        "restaurants",
+        "ports",
+        "industry",
+        "port",
+        "savannah"
+      ],
+      "size": 28,
+      "mean_valence": -0.102,
+      "mean_tone": 0.014,
+      "examples": [
+        "Georgia companies deconstruct buildings instead of demolishing them",
+        "Do these Georgia waterways support ‘significant’ commercial activity? A federal agency says no",
+        "Brown bananas, crowded ports, empty shelves: What to expect if there’s a big dockworkers strike in the US"
+      ]
+    },
+    {
+      "id": 17,
+      "label": "housing · city · savannah",
+      "keywords": [
+        "housing",
+        "city",
+        "savannah",
+        "residents",
+        "housing authority",
+        "affordable"
+      ],
+      "size": 25,
+      "mean_valence": -0.1,
+      "mean_tone": -0.014,
+      "examples": [
+        "Yamacraw residents wait as Savannah housing area continues to deteriorate",
+        "Housing construction for homeless men in limbo after Glynn County Commission defers vote",
+        "Diminished Yamacraw community subject to rampant neglect, widening disparities"
+      ]
+    },
+    {
+      "id": 16,
+      "label": "election · qr · ballots",
+      "keywords": [
+        "election",
+        "qr",
+        "ballots",
+        "codes",
+        "qr codes",
+        "voting"
+      ],
+      "size": 25,
+      "mean_valence": -0.192,
+      "mean_tone": -0.028,
+      "examples": [
+        "Election 2024: Summary",
+        "New laws will affect elections, taxes, health care",
+        "An effort to block non-citizens from voting could impact married women, too"
+      ]
+    },
+    {
+      "id": 18,
+      "label": "okefenokee · mining · twin",
+      "keywords": [
+        "okefenokee",
+        "mining",
+        "twin",
+        "swamp",
+        "pines",
+        "refuge"
+      ],
+      "size": 22,
+      "mean_valence": 0.141,
+      "mean_tone": 0.02,
+      "examples": [
+        "Investors warn Chemours against future mining near Okefenokee",
+        "Company would break covenant to mine near Okefenokee",
+        "Georgia scientists look to seagrass for climate solutions"
+      ]
+    },
+    {
+      "id": 19,
+      "label": "island · turtles · turtle",
+      "keywords": [
+        "island",
+        "turtles",
+        "turtle",
+        "sea",
+        "tybee",
+        "species"
+      ],
+      "size": 22,
+      "mean_valence": 0.232,
+      "mean_tone": 0.127,
+      "examples": [
+        "More monarch butterflies are dying on their migration to Mexico. It’s unclear why",
+        "Will end of endangered status for red-cockaded woodpecker reduce role of Georgia military bases?",
+        "Georgia fruit growers, state agriculture experts on alert for spotted lanternfly sightings"
+      ]
+    },
+    {
+      "id": 20,
+      "label": "measles · vaccine · flu",
+      "keywords": [
+        "measles",
+        "vaccine",
+        "flu",
+        "health",
+        "covid",
+        "virus"
+      ],
+      "size": 21,
+      "mean_valence": -0.39,
+      "mean_tone": -0.05,
+      "examples": [
+        "Expert: Long COVID puzzle pieces are falling into place – picture is unsettling",
+        "Georgia’s fourth case of bird flu detected in backyard chicken flock in metro Atlanta",
+        "First case of commercial bird flu: ‘serious threat’ to Georgia’s ag industry"
+      ]
+    },
+    {
+      "id": 21,
+      "label": "ai · records · cameras",
+      "keywords": [
+        "ai",
+        "records",
+        "cameras",
+        "police",
+        "said",
+        "public"
+      ],
+      "size": 21,
+      "mean_valence": -0.06,
+      "mean_tone": -0.007,
+      "examples": [
+        "State Supreme Court rules Open Records Act applies to private contractors working for governments",
+        "A new take on robocop? Georgia lawmakers look into ways AI can improve public safety",
+        "Georgia lawmakers push to shield judges’ personal info from public records"
+      ]
+    },
+    {
+      "id": 23,
+      "label": "midway · city · county",
+      "keywords": [
+        "midway",
+        "city",
+        "county",
+        "station",
+        "liberty county",
+        "liberty"
+      ],
+      "size": 20,
+      "mean_valence": -0.11,
+      "mean_tone": -0.072,
+      "examples": [
+        "Midway’s assistant fire chief: ‘Someone could die’",
+        "Mysterious signs say Midway Fire Station is closed",
+        "Midway to discuss moving fire protection to Liberty County"
+      ]
+    },
+    {
+      "id": 22,
+      "label": "transgender · sports · athletes",
+      "keywords": [
+        "transgender",
+        "sports",
+        "athletes",
+        "genderaffirming",
+        "girls",
+        "said"
+      ],
+      "size": 20,
+      "mean_valence": -0.31,
+      "mean_tone": -0.068,
+      "examples": [
+        "State Senate forms committee to ‘protect women’s sports’",
+        "Young Appalachians want better intergenerational political conversations",
+        "Georgia Senate study panel considers restrictions on trans women’s college sports participation"
+      ]
+    },
+    {
+      "id": 24,
+      "label": "higgins · glynn · office",
+      "keywords": [
+        "higgins",
+        "glynn",
+        "office",
+        "county",
+        "das",
+        "glynn county"
+      ],
+      "size": 19,
+      "mean_valence": -0.455,
+      "mean_tone": -0.05,
+      "examples": [
+        "Brunswick DA’s office over budget by $880,000; county defers vote to help",
+        "Brunswick DA Keith Higgins to stop representing state in Juvenile Court",
+        "Brunswick daycare closes permanently after state investigation finds 11 rule violations"
+      ]
+    },
+    {
+      "id": 25,
+      "label": "ellis · board · cat",
+      "keywords": [
+        "ellis",
+        "board",
+        "cat",
+        "transit",
+        "chatham",
+        "county"
+      ],
+      "size": 16,
+      "mean_valence": -0.406,
+      "mean_tone": -0.153,
+      "examples": [
+        "Judge dismisses Cumberland horses’ lawsuit",
+        "Costs, delays increase as unbuilt Chatham emergency ops center still without contractor",
+        "After violations sank process to build $89 million Chatham emergency ops center, same companies approved to bid again"
+      ]
+    },
+    {
+      "id": 28,
+      "label": "liberty · liberty county · county",
+      "keywords": [
+        "liberty",
+        "liberty county",
+        "county",
+        "walthourville",
+        "city",
+        "waste"
+      ],
+      "size": 15,
+      "mean_valence": -0.147,
+      "mean_tone": 0.0,
+      "examples": [
+        "Liberty County Commission takes control of funds from speed-camera violations",
+        "Walthourville citizens invited to comment on sanitation companies",
+        "What does it really cost to live in Liberty County?"
+      ]
+    },
+    {
+      "id": 27,
+      "label": "ballots · early · voting",
+      "keywords": [
+        "ballots",
+        "early",
+        "voting",
+        "county",
+        "early voting",
+        "voters"
+      ],
+      "size": 15,
+      "mean_valence": 0.02,
+      "mean_tone": -0.007,
+      "examples": [
+        "Glynn County Board of Elections adds extra hour to last days of voting before election",
+        "Debunking a Liberty County election rumor",
+        "Liberty County early voting draws crowds"
+      ]
+    },
+    {
+      "id": 26,
+      "label": "abortion · law · moore",
+      "keywords": [
+        "abortion",
+        "law",
+        "moore",
+        "maternal",
+        "pregnancy",
+        "health"
+      ],
+      "size": 15,
+      "mean_valence": -0.353,
+      "mean_tone": -0.083,
+      "examples": [
+        "Judge rules Georgia’s restrictive abortion law unconstitutional",
+        "Georgia Supreme Court reinstates six-week abortion ban while state appeals",
+        "Georgia dismissed all members of Maternal Mortality Committee after ProPublica obtained internal details of two deaths"
+      ]
+    }
+  ]
+}

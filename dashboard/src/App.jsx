@@ -7,6 +7,7 @@ import ToneScatter from './charts/ToneScatter'
 import HeatmapChart from './charts/HeatmapChart'
 import { avg, sections } from './lib/aggregate'
 import ComparisonView from './ComparisonView'
+import ThemesSection from './ThemesSection'
 
 export default function App() {
   const [data, setData] = useState(null)
@@ -198,7 +199,9 @@ export default function App() {
           </div>
         </Group>
 
-        <Group n="04" label="Notable coverage">
+        <ThemesSection n="04" />
+
+        <Group n="05" label="Notable coverage">
           <div className="tables">
             <ArticleTable
               title="Most negative valence"

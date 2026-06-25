@@ -1,0 +1,4 @@
+# Build-time Python dependencies. The deployed dashboard is a static app — these
+# run locally only, to produce the JSON the dashboard reads. scrape.py is stdlib-only.
+anthropic     # score.py / score_batch.py — sentiment scoring via Claude
+bertopic      # build_topics.py — theme discovery (pulls sentence-transformers, umap-learn, hdbscan, scikit-learn)
