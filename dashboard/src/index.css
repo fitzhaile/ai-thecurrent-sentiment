@@ -63,7 +63,8 @@ body {
 .muted { color: var(--muted); font-size: 13px; }
 
 /* KPI stat cards */
-.kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin: 16px 0 18px; animation: rise .6s .1s both; }
+.kpis { display: grid; grid-template-columns: repeat(6, 1fr); gap: 13px; margin: 16px 0 18px; animation: rise .6s .1s both; }
+.kpi-val { white-space: nowrap; }
 .kpi {
   position: relative; overflow: hidden; background: var(--card); border: 1px solid var(--line);
   border-radius: 16px; padding: 24px 22px 20px; box-shadow: var(--shadow);

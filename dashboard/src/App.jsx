@@ -36,6 +36,7 @@ export default function App() {
   const meanTone = avg(arts.map((a) => a.tone))
   const pctNeg = arts.length ? Math.round(arts.filter((a) => a.valence <= -0.15).length / arts.length * 100) : 0
   const pctPos = arts.length ? Math.round(arts.filter((a) => a.valence >= 0.15).length / arts.length * 100) : 0
+  const pctNeu = arts.length ? 100 - pctNeg - pctPos : 0
 
   return (
     <div className="page">
@@ -94,6 +95,7 @@ export default function App() {
           <Kpi label="Mean valence" value={meanVal.toFixed(2)} sign={meanVal} />
           <Kpi label="Mean tone" value={meanTone.toFixed(2)} sign={meanTone} />
           <Kpi label="Negative" value={`${pctNeg}%`} sign={-1} />
+          <Kpi label="Neutral" value={`${pctNeu}%`} />
           <Kpi label="Positive" value={`${pctPos}%`} sign={1} />
         </div>
 
@@ -101,8 +103,8 @@ export default function App() {
           Each article was scored by Claude on two independent −1‑to‑+1 scales: <b>valence</b> — how positive or
           negative it feels overall — and <b>tone</b> — how slanted the <i>writing</i> is, regardless of how grim
           the topic. Straight reporting of a tragedy is strongly negative valence but roughly neutral tone. The
-          {' '}<b>Negative</b> and <b>Positive</b> tiles count articles past ±0.15 — they don't add to 100%, since
-          the rest (often the largest share) sit in the <b>neutral</b> middle: routine, procedural coverage.
+          {' '}<b>Negative / Neutral / Positive</b> tiles split every article by the ±0.15 cutoffs, so they sum to
+          100% — the <b>neutral</b> middle is routine, procedural coverage that reads as neither.
         </p>
 
         <Group n="01" label="Sentiment over time">
